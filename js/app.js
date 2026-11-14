@@ -166,9 +166,9 @@ function onVisibility() {
 function applyTheme() {
   document.documentElement.dataset.theme = S.theme.key;
   requestAnimationFrame(() => {
-    const paper = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim();
+    const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
     const meta = $('meta[name="theme-color"]');
-    if (meta && paper) meta.setAttribute('content', paper);
+    if (meta && bg) meta.setAttribute('content', bg);
   });
 }
 
@@ -533,7 +533,7 @@ function renderToday() {
 }
 
 function hatForTheme() {
-  return S.theme.key === 'christmas' || S.theme.key === 'halloween' ? S.theme.key : null;
+  return ['christmas', 'halloween', 'newyear'].includes(S.theme.key) ? S.theme.key : null;
 }
 
 function renderHero(e) {
@@ -541,19 +541,20 @@ function renderHero(e) {
   const faceBtn = h('button', {
     class: `hero-face${upside ? ' upside' : ''}`,
     type: 'button',
-    'aria-label': moodName(e.m),
+    'aria-label': `${moodName(e.m)}, ${t('mascot')}`,
     svg: face(e.m, { hat: hatForTheme() }),
     onclick: (ev) => pokeFace(ev.currentTarget),
   });
+  const word = h('div', { class: e.c ? 'hero-text hero-word' : 'hero-text hero-talk' },
+    h('p', { class: 'mood-word', text: moodName(e.m) }),
+    h('p', { class: 'meta' },
+      h('time', { datetime: e.t, text: fmtTime(e.t) }),
+      h('span', { class: 'rel', 'data-t': e.t, text: `, ${fmtRel(e.t)}` }),
+      e.p ? h('span', { class: 'badge' }, h('span', { svg: icon('lock'), class: 'badge-ico' }), t('just_me_badge')) : null));
   return h('section', { class: 'hero', 'aria-label': t('tab_today') },
     faceBtn,
-    h('div', { class: 'hero-text' },
-      h('p', { class: 'mood-word', text: moodName(e.m) }),
-      e.c ? h('p', { class: 'tape', text: e.c }) : null,
-      h('p', { class: 'meta' },
-        h('time', { datetime: e.t, text: fmtTime(e.t) }),
-        h('span', { class: 'rel', 'data-t': e.t, text: `, ${fmtRel(e.t)}` }),
-        e.p ? h('span', { class: 'badge' }, h('span', { svg: icon('lock'), class: 'badge-ico' }), t('just_me_badge')) : null)),
+    e.c ? h('div', { class: 'hero-talk' }, h('p', { class: 'bubble', text: e.c })) : null,
+    word,
     decorSlot(0),
     S.ladybug ? ladybugEl() : null);
 }
@@ -576,8 +577,8 @@ function entryRow(e, { inSheet = false } = {}) {
 
 function stateCard(title, body) {
   return h('section', { class: 'hero state' },
-    h('button', { class: 'hero-face', type: 'button', 'aria-label': title, svg: face(0, { hat: hatForTheme() }), onclick: (ev) => pokeFace(ev.currentTarget) }),
-    h('div', { class: 'hero-text' },
+    h('button', { class: 'hero-face', type: 'button', 'aria-label': t('mascot'), svg: face(0, { hat: hatForTheme() }), onclick: (ev) => pokeFace(ev.currentTarget) }),
+    h('div', { class: 'hero-talk' },
       h('h2', { class: 'state-title', text: title }),
       h('p', { class: 'state-body', text: body })),
     decorSlot(0),

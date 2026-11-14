@@ -1,13 +1,13 @@
 # VibeCheck
 
-A playful page that shows how I'm feeling today, in a sticker-diary style that changes with the seasons.
+A comic-book page that shows how I'm feeling today, told by Moody McMugface, a tough little coffee mug. The colours change with the seasons.
 
 **Live:** https://hichamabd.github.io/VibeCheck/
 
 ## How it works
 
-- **Friends** open the link I send them (it ends with `#k=…`). They see today's moods only: a face, the time, and a short comment.
-- **Me:** I post from the app on my iPhone. I pick one of 5 faces, add a few words, and can mark a mood "Just me". My private side has a year grid, where I can tap any day to see, edit or delete its moods.
+- **Friends** open the link I send them (it ends with `#k=…`). They see today's moods only: Moody's expression, the time, and a short comment in a speech bubble.
+- **Me:** I post from the app on my iPhone. I pick one of Moody's 5 moods, add a few words, and can mark a mood "Just me". My private side has a year grid, where I can tap any day to see, edit or delete its moods.
 
 ## Install on iPhone
 

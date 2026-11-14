@@ -3,48 +3,102 @@
 // coloured body. No inline style attributes (the content security policy
 // forbids them): colours are plain SVG attributes.
 
-export const INK = '#1D2B53';
-export const MOOD_COLORS = ['#E6DCCB', '#A08BEA', '#8DB8F2', '#F1DDB3', '#9CDB6A', '#FFC93C'];
+export const INK = '#1A1F36';
+// Mood colours, index = mood (0 = asleep / nothing yet, 1 = awful … 5 = great).
+export const MOOD_COLORS = ['#C9CED8', '#D8392B', '#3D78D8', '#9AA6BA', '#2FB565', '#FFB21A'];
 
+// Decorations: drawn once, rendered four times (offset shadow, white die-cut,
+// ink outline, then the coloured body). Outline widths come from css/app.css.
 function sticker(body, { cut = 10, cls = '', vb = '0 0 100 100' } = {}) {
   return `<svg viewBox="${vb}" class="stk cut-${cut} ${cls}" aria-hidden="true" focusable="false">` +
-    `<g class="stk-shadow" transform="translate(1.6 3.2)">${body}</g>` +
+    `<g class="stk-shadow" transform="translate(2 3.5)">${body}</g>` +
     `<g class="stk-cut">${body}</g>` +
+    `<g class="stk-ink">${body}</g>` +
     `<g class="stk-body">${body}</g></svg>`;
 }
 
-// ---------- Faces ----------
-const EYE_DOTS = `<circle cx="38" cy="44" r="4.6" fill="${INK}"/><circle cx="62" cy="44" r="4.6" fill="${INK}"/>`;
-const CHEEKS = `<circle cx="28" cy="58" r="6" fill="#FF8FA3" opacity="0.55"/><circle cx="72" cy="58" r="6" fill="#FF8FA3" opacity="0.55"/>`;
-const STROKE = `stroke="${INK}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"`;
+// ---------- Moody McMugface ----------
+// A chunky diner mug with attitude. Everything is plain SVG attributes
+// (the content security policy forbids inline styles).
+const WHITE = '#FFFFFF';
+const COFFEE = '#4A2B19';
+const P = (d, c = INK, w = 5, extra = '') => `<path d="${d}" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" fill="none" ${extra}/>`;
+const dot = (x, y, r = 3.6, c = INK, extra = '') => `<circle cx="${x}" cy="${y}" r="${r}" fill="${c}" ${extra}/>`;
+const BODY = 'M10 32V80q0 12 12 12h40q12 0 12-12V32Z';
+const HANDLE = 'M74 46q20 0 20 16q0 16-20 16';
 
-const FEATURES = {
-  0: `<path d="M31 46q7 5 14 0M55 46q7 5 14 0" ${STROKE}/>` +
-     `<path d="M43 65q7 4 14 0" ${STROKE}/>` +
-     `<path d="M74 10h9l-9 10h9M86 -2h6l-6 7h6" stroke="${INK}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`,
-  1: `<path d="M31 39l9 5l-9 5M69 39l-9 5l9 5" ${STROKE}/>` +
-     `<path d="M33 69q5.5-6 11 0q5.5 6 11 0q5.5-6 11 0" ${STROKE}/>` +
-     `<path d="M72 52q-4 7 0 9q4-2 0-9z" fill="#4F86D9"/>`,
-  2: EYE_DOTS + `<path d="M36 67q14-11 28 0" ${STROKE}/>`,
-  3: EYE_DOTS + `<path d="M37 63h26" ${STROKE}/>`,
-  4: EYE_DOTS + CHEEKS + `<path d="M34 58q16 15 32 0" ${STROKE}/>`,
-  5: `<path d="M32 45q6-8 12 0M56 45q6-8 12 0" ${STROKE}/>` + CHEEKS +
-     `<path d="M31 56h38q0 20-19 20q-19 0-19-20z" fill="${INK}"/>` +
-     `<path d="M41 70q9-6 18 0q-4 5-9 5q-5 0-9-5z" fill="#FF8FA3"/>`,
+function puff(x, y) {
+  const d = `M${x} ${y}q-5 -6 0 -11q5 -5 0 -11`;
+  return P(d, INK, 8) + P(d, WHITE, 3.6);
+}
+const STEAM = { 5: [28, 42, 56], 4: [35, 49], 3: [42], 2: [], 1: [], 0: [] };
+
+const FACE = {
+  // asleep: nothing posted yet
+  0: P('M23 46h14M47 46h14', INK, 6) + P('M24 54q6 5 12 0M48 54q6 5 12 0', INK, 4.5) +
+     `<ellipse cx="42" cy="72" rx="4" ry="3.2" fill="${INK}"/>` +
+     P('M72 6h9l-9 10h9M86 -8h6l-6 7h6', INK, 3.5),
+  // awful: steep brows, gritted teeth
+  1: P('M23 43l15 9M61 43l-15 9', INK, 7) + dot(31, 58) + dot(53, 58) +
+     `<rect x="30" y="67" width="24" height="10" rx="3" fill="${WHITE}" stroke="${INK}" stroke-width="3.2"/>` +
+     P('M30 72h24M36 67v10M42 67v10M48 67v10', INK, 1.8),
+  // bad: furrowed, frowning
+  2: P('M23 45l15 6M61 45l-15 6', INK, 7) + dot(31, 57) + dot(53, 57) + P('M33 74q9-7 18 0', INK, 5),
+  // okay: heavy flat brows, half-closed eyes
+  3: P('M23 48h15M46 48h15', INK, 7) + P('M25 55h12M47 55h12', INK, 4) + dot(31, 57.5, 2.6) + dot(53, 57.5, 2.6) + P('M35 71h15', INK, 5),
+  // good: one eyebrow up, smirk
+  4: P('M24 46q7-7 14-3', INK, 6.5) + P('M46 47h14', INK, 6.5) + dot(31, 55) + dot(53, 55) + P('M32 71q11 5 20-5', INK, 5),
+  // great: aviators and a big toothy grin
+  5: `<path d="M22 49h16q2.5 0 2 3q-1.5 9-10 9q-8.5 0-10-9q-.5-3 2-3z" fill="${INK}"/>` +
+     `<path d="M46 49h16q2.5 0 2 3q-1.5 9-10 9q-8.5 0-10-9q-.5-3 2-3z" fill="${INK}"/>` +
+     P('M40 51h6', INK, 3) + P('M25 52l4 0', WHITE, 2.2) + P('M49 52l4 0', WHITE, 2.2) +
+     `<path d="M28 66h28q0 14-14 14q-14 0-14-14z" fill="${WHITE}" stroke="${INK}" stroke-width="3.5" stroke-linejoin="round"/>` +
+     P('M29 70h26M35 66v6M42 66v6M49 66v6', INK, 2),
 };
+
+const STUBBLE = [[28, 82], [33, 85], [39, 86], [45, 86], [51, 85], [56, 82], [31, 80.5], [54, 80.5], [42, 83]]
+  .map(([x, y]) => dot(x, y, 1.1, INK, 'opacity="0.45"')).join('');
 
 const HATS = {
-  christmas: `<path d="M20 30Q36 0 72 10Q88 16 86 34L26 34Z" fill="#E0453A"/>` +
-             `<rect x="16" y="26" width="68" height="12" rx="6" fill="#FFFFFF"/><circle cx="87" cy="36" r="7" fill="#FFFFFF"/>`,
-  halloween: `<rect x="14" y="24" width="72" height="9" rx="4.5" fill="#2B2340"/>` +
-             `<path d="M30 27L50 -2L68 27Z" fill="#2B2340"/><path d="M33 22h33" stroke="#9B5DE5" stroke-width="5" fill="none"/>`,
+  christmas: `<path d="M12 30Q22 2 60 6Q80 10 84 30" fill="#D8392B" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>` +
+    `<rect x="6" y="24" width="74" height="13" rx="6.5" fill="${WHITE}" stroke="${INK}" stroke-width="3.5"/>` +
+    dot(86, 32, 7, WHITE, `stroke="${INK}" stroke-width="3.5"`),
+  halloween: `<path d="M22 28L44 -6L64 28Z" fill="#3B2A5C" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>` +
+    `<rect x="4" y="25" width="76" height="9" rx="4.5" fill="#3B2A5C" stroke="${INK}" stroke-width="3.5"/>` + P('M26 20h35', '#F28C28', 5),
+  newyear: `<path d="M30 28L48 -4L64 26Z" fill="#FFB21A" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>` +
+    P('M38 14l16 6M34 22l26 4', '#D8392B', 3.5) + dot(48, -6, 5, '#2FB565', `stroke="${INK}" stroke-width="3"`),
 };
 
+function moody(m, hat) {
+  const c = MOOD_COLORS[m] ?? MOOD_COLORS[3];
+  const sil = (fill, st, handleW) => P(HANDLE, fill, handleW) +
+    `<path d="${BODY}" fill="${fill}" ${st}/>` + `<ellipse cx="42" cy="32" rx="32" ry="8" fill="${fill}" ${st}/>`;
+  let s = `<g transform="translate(2.5 4)" class="mug-shadow">${sil(INK, `stroke="${INK}" stroke-width="14" stroke-linejoin="round"`, 25)}</g>`;
+  s += sil(WHITE, `stroke="${WHITE}" stroke-width="14" stroke-linejoin="round"`, 25);
+  s += P(HANDLE, INK, 18) + P(HANDLE, c, 10.5);
+  s += `<path d="${BODY}" fill="${c}" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/>`;
+  s += `<rect x="60" y="40" width="9" height="44" rx="4.5" fill="#000000" opacity="0.13"/>`;
+  s += `<rect x="16" y="42" width="5" height="26" rx="2.5" fill="${WHITE}" opacity="0.5"/>`;
+  s += `<ellipse cx="42" cy="32" rx="32" ry="8" fill="${c}" stroke="${INK}" stroke-width="6"/>`;
+  s += `<ellipse cx="42" cy="32.5" rx="25" ry="4.6" fill="${m === 0 ? '#3A3F52' : COFFEE}"/>`;
+  s += `<path d="M16 27.5l4 5l-5 3.5" fill="${WHITE}" stroke="${INK}" stroke-width="2.5" stroke-linejoin="round"/>`;
+  s += STUBBLE + (FACE[m] ?? FACE[3]);
+  if (m === 2) s += `<path d="M66 36v13q0 4 3.5 4q3.5 0 3.5-4v-11" fill="${COFFEE}" stroke="${INK}" stroke-width="2.5"/>`;
+  if (m === 1) {
+    s += P('M67 38l-5 8l5 5l-5 8', INK, 3.2) +
+      `<g transform="rotate(-30 62 80)"><rect x="52" y="75.5" width="20" height="9" rx="4.5" fill="#F2C38B" stroke="${INK}" stroke-width="2.5"/><rect x="59" y="75.5" width="6" height="9" fill="#E3A866"/></g>`;
+  }
+  if (hat && HATS[hat]) s += HATS[hat];
+  else if (m === 1) {
+    const smoke = `stroke="${INK}" stroke-width="3"`;
+    s += dot(36, 10, 6, '#6B7080', smoke) + dot(46, 4, 7.5, '#6B7080', smoke) + dot(56, 11, 5, '#6B7080', smoke);
+  } else s += STEAM[m].map((x) => puff(x, 22)).join('');
+  return s;
+}
+
+// Same name as before so the rest of the app keeps working: face(m) draws Moody.
 export function face(m, { hat = null, cls = '' } = {}) {
-  const color = MOOD_COLORS[m] ?? MOOD_COLORS[3];
-  const body = `<circle cx="50" cy="52" r="40" fill="${color}"/>` + (FEATURES[m] ?? FEATURES[3]);
-  const withHat = hat && HATS[hat] ? body + HATS[hat] : body;
-  return sticker(withHat, { cls: `face ${cls}`, vb: '0 -6 100 108' });
+  return `<svg viewBox="-10 -16 118 120" class="stk mug ${cls}" aria-hidden="true" focusable="false">${moody(m, hat)}</svg>`;
 }
 
 // ---------- Seasonal decorations ----------

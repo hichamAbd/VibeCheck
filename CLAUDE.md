@@ -8,18 +8,24 @@ Data is stored encrypted.
 ## Decisions from the interview (Nov 2026)
 - Kind: web app on GitHub Pages, added to the iPhone Home Screen.
 - Name: VibeCheck. Language: English or French, following each visitor's phone language (`js/i18n.js`).
-- Look: "Sticker diary". Moods are thick die-cut stickers on dotted paper whose colour changes with the season.
-  Typeface: the iPhone's rounded system font (`ui-rounded`), with no font files to download.
-- Moods: 5 faces (1 Awful … 5 Great), an optional comment of up to 140 characters, and several posts per day allowed.
+- Look: "Comic" (changed on the owner's request, who found the first round-face sticker diary too girly: keep it bold
+  and cartoonishly tough). The page is a bold halftone colour that changes with the season. Content sits in white comic panels
+  with 3px ink outlines and hard shadows. The date is a yellow caption box, and the comment is in a speech bubble.
+  Dark mode deepens the background and uses dark panels. Typeface: the iPhone's rounded system font (`ui-rounded`) at heavy weights, with no font files.
+- Mascot: **Moody McMugface**, a chunky diner mug with stubble and a chipped rim (`js/art.js`, `face(m)`).
+  Great: aviators and a toothy grin, 3 puffs of steam. Good: one raised brow and a smirk. Okay: heavy lids and a flat mouth.
+  Bad: a furrowed frown and a coffee drip. Awful: gritted teeth, a crack, a band-aid and smoke. 0 (nothing yet): asleep.
+  Mood colours: 1 #D8392B, 2 #3D78D8, 3 #9AA6BA, 4 #2FB565, 5 #FFB21A (also used in the year grid).
+- Moods: 5 levels (1 Awful … 5 Great), an optional comment of up to 140 characters, and several posts per day allowed.
 - Friends see **today's moods only** (the latest one big, then "Earlier today"). They cannot post.
 - Owner: PIN to post, a "Just me" switch per mood (never shown to friends), a year grid dashboard
   (tap a day to see, edit or delete its moods), and a backup file.
 - Themes: seasons (northern hemisphere), New Year (31 Dec to 1 Jan), April Fools (1 Apr: the face is upside down until tapped),
-  Halloween (24 to 31 Oct: witch hat), Christmas (18 to 26 Dec: Santa hat). **No personal dates**: the owner explicitly
+  Halloween (24 to 31 Oct: witch hat), Christmas (18 to 26 Dec: Santa hat), New Year (party hat). **No personal dates**: the owner explicitly
   excluded birthdays and Valentine's Day. Preview any look with `?look=winter` (autumn, winter, spring,
   summer, halloween, christmas, newyear, aprilfools).
-- Hidden surprises: peel the 4 seasonal stickers (a doodle shows underneath, and peeling all 4 sets off confetti), poke the
-  big face (3 pokes get a message, 5 make it spin), a rare ladybug, letters that wave when the wordmark is tapped,
+- Hidden surprises: peel the 4 seasonal stickers (a doodle shows underneath, and peeling all 4 sets off confetti), poke
+  Moody (3 pokes get a message, 5 make him spin), a rare ladybug, letters that wave when the wordmark is tapped,
   and confetti on New Year.
 
 ## How it works
@@ -52,8 +58,8 @@ Data is stored encrypted.
   User text always goes through `textContent`.
 
 ## Files
-`index.html`, `css/app.css`, `js/app.js` (state, rendering, flows), `js/art.js` (all drawings: faces, seasonal
-stickers, icons), `js/crypto.js`, `js/github.js`, `js/i18n.js`, `js/season.js`, `sw.js` (offline), `manifest.webmanifest`,
+`index.html`, `css/app.css`, `js/app.js` (state, rendering, flows), `js/art.js` (all drawings: Moody McMugface, seasonal
+stickers with ink outlines, icons), `js/crypto.js`, `js/github.js`, `js/i18n.js`, `js/season.js`, `sw.js` (offline), `manifest.webmanifest`,
 `icons/` (generated from `icons/icon.svg` with rsvg-convert), `dev/` (local test tools, not part of the app).
 
 ## Publishing

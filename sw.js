@@ -1,6 +1,6 @@
 // Offline support. App files: served from the cache, refreshed in the
 // background. Mood files (data/): always fetched fresh, cache used offline.
-const CACHE = 'vibecheck-v1';
+const CACHE = 'vibecheck-v2';
 const SHELL = [
   './',
   'index.html',
